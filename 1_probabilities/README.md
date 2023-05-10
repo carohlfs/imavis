@@ -8,6 +8,7 @@ The logit folder contains R scripts for cleaning the data & performing logistic 
 - logit
 
 	o downsample.R
+
 		- consumes training & test CSVs - raw data with pixel intensities & classifications
 		- saves RDS files for main data (mnist.RDS through cifar.RDS)
 		- saves <dataname><downsamplerate>.RDS files for all combinations of dataname & downsample rate.
