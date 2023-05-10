@@ -6,10 +6,12 @@
 The logit folder contains R scripts for cleaning the data & performing logistic regression.
 
 - logit
+
 	o downsample.R
 		- consumes training & test CSVs - raw data with pixel intensities & classifications
 		- saves RDS files for main data (mnist.RDS through cifar.RDS)
 		- saves <dataname><downsamplerate>.RDS files for all combinations of dataname & downsample rate.
+
 	o pca.R
 		- generates principal components for actual & downsampled pixel intensity data.
 		- full-sized data are always used in training, so just one set of eigenvectors is produced for each dataset
