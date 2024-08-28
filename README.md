@@ -33,12 +33,12 @@ This folder contains R scripts that implement two threshold-based estimators. On
 ## Installation
 To run the code in this repository, you'll need to install some dependencies as illustrated below.
 
-In a Unix terminal:
+At a Unix command prompt:
 ```bash
 pip3 install -r requirements.txt
 ```
 
-And within R:
+And within R at the command prompt:
 ```R
 install.packages(c("data.table", "tidyr", "scales", "lmtest", "aod", "parallel", "zoo", "svglite", "rlist"))
 ```
