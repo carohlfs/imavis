@@ -33,10 +33,12 @@ This folder contains R scripts that implement two threshold-based estimators. On
 ## Installation
 To run the code in this repository, you'll need to install some dependencies as illustrated below.
 
+In a Unix terminal:
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
+And within R:
 ```R
 install.packages(c("data.table", "tidyr", "scales", "lmtest", "aod", "parallel", "zoo", "svglite", "rlist"))
 ```
@@ -45,7 +47,7 @@ install.packages(c("data.table", "tidyr", "scales", "lmtest", "aod", "parallel",
 To run the model training and probability output script in the `1_probabilities` folder:
 
 ```bash
-python train_models.py
+python3 train_models.py
 ```
 
 ## Reference
