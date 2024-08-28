@@ -38,7 +38,7 @@ At a Unix command prompt:
 pip3 install -r requirements.txt
 ```
 
-And within R at the command prompt:
+And in an R session at that command prompt:
 ```R
 install.packages(c("data.table", "tidyr", "scales", "lmtest", "aod", "parallel", "zoo", "svglite", "rlist"))
 ```
