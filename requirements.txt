@@ -2,7 +2,6 @@ Pillow
 argparse
 datetime
 fvcore
-imagenetv2_pytorch
 matplotlib
 models
 numpy
