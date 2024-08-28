@@ -1,6 +1,6 @@
 # Problem-dependent Attention and Effort in Neural Networks: Code and Analysis
 
-This repository contains the code and analysis used for the paper "Problem-dependent attention and effort in neural networks with applications to image resolution and model selection" ([article link]([https://arxiv.org/abs/2201.01415](https://www.sciencedirect.com/science/article/abs/pii/S0262885623000707)) [arXiv link](https://arxiv.org/abs/2201.01415)). The repository is structured into six sections, each corresponding to different aspects of the analysis and figures presented in the paper.
+This repository contains the code and analysis used for the paper "Problem-dependent attention and effort in neural networks with applications to image resolution and model selection" ([article link](https://www.sciencedirect.com/science/article/abs/pii/S0262885623000707) [arXiv link](https://arxiv.org/abs/2201.01415)). The repository is structured into six sections, each corresponding to different aspects of the analysis and figures presented in the paper.
 
 ## Table of Contents
 - [1_probabilities](#1_probabilities)
@@ -31,17 +31,19 @@ R scripts that generate Figure 6, showing correlations between model confidence 
 This folder contains R scripts that implement two threshold-based estimators. One estimator selects image resolution to reduce data usage (Table 4 & Figure 7), while the other selects models to reduce computation (Table 5 & Figure 8). Both the tables and the figures illustrate the tradeoffs between accuracy and cost.
 
 ## Installation
-To run the code in this repository, you'll need to install the following dependencies. You can install them using the following command:
+To run the code in this repository, you'll need to install some dependencies as illustrated below.
 
 ```bash
 pip install -r requirements.txt
 install.packages(c("ggplot2", "dplyr"))
+```
 
 ## Usage
 To run the model training and probability output script in the `1_probabilities` folder:
 
 ```bash
 python train_models.py
+```
 
 ## Reference
 If you use this code, please cite my paper:
@@ -54,6 +56,7 @@ If you use this code, please cite my paper:
   JOURNAL = "Image and Vision Computing",
   VOLUME = "135",
   PAGES = "104696" }
+```
 
 ## License
 This repository is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
