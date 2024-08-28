@@ -33,15 +33,33 @@ This folder contains R scripts that implement two threshold-based estimators. On
 ## Installation
 To run the code in this repository, you'll need to install some dependencies as illustrated below.
 
-At a Unix command prompt:
+1. **Install Required Packages**:
+
+- At a Unix command prompt, install the necessary Python packages:
 ```bash
 pip3 install -r requirements.txt
 ```
-
-And in an R session at that command prompt:
+- And in an R session's command prompt, install additional packages:
 ```R
 install.packages(c("data.table", "tidyr", "scales", "lmtest", "aod", "parallel", "zoo", "svglite", "rlist"))
 ```
+
+2. **Set Up ImageNet-V2 Dataset**:
+   - This project requires the ImageNet-V2 dataset, which must be downloaded separately due to licensing restrictions. Follow these steps:
+     - Visit the [ImageNet download page](https://image-net.org/download.php) and create an account or log in.
+     - Request access to the ImageNet-V2 1k dataset. Approval may take some time.
+     - After gaining access, ensure you have at least 150GB of free space and download the dataset and extract it to a directory on your local machine:
+       ```bash
+       mkdir -p ~/datasets/imagenetv2
+       tar -xzf path_to_downloaded_file.tar.gz -C ~/datasets/imagenetv2
+       ```
+     - Update your project configuration to point to the dataset directory:
+       ```python
+       dataset_path = '~/datasets/imagenetv2'
+       ```
+
+**Note**: The procedures for accessing and downloading the dataset may change over time. If you encounter issues, please refer to the latest instructions on the [ImageNet website](https://image-net.org/download.php).
+
 
 ## Usage
 To run the model training and probability output script in the `1_probabilities` folder:
