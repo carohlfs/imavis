@@ -1,4 +1,4 @@
-# Problem-dependent Attention and Effort in Neural Networks: Code and Analysis
+# Problem-Dependent Attention and Effort in Neural Networks: Code and Analysis
 
 This repository contains the code and analysis used for the paper "Problem-dependent attention and effort in neural networks with applications to image resolution and model selection" ([article link](https://www.sciencedirect.com/science/article/abs/pii/S0262885623000707) [arXiv link](https://arxiv.org/abs/2201.01415)). The repository is structured into six sections, each corresponding to different aspects of the analysis and figures presented in the paper.
 
@@ -37,7 +37,7 @@ To run the code in this repository, you'll need to install some dependencies as 
 
 - At a Unix command prompt, install the necessary Python packages:
 ```bash
-pip3 install -r requirements.txt
+pip3 install Pillow fvcore matplotlib numpy pandas ptflops torch torchvision
 ```
 - And in an R session's command prompt, install additional packages:
 ```R
@@ -52,10 +52,6 @@ install.packages(c("data.table", "tidyr", "scales", "lmtest", "aod", "parallel",
        ```bash
        mkdir -p ~/datasets/imagenetv2
        tar -xzf path_to_downloaded_file.tar.gz -C ~/datasets/imagenetv2
-       ```
-     - Update your project configuration to point to the dataset directory:
-       ```python
-       dataset_path = '~/datasets/imagenetv2'
        ```
 
 **Note**: The procedures for accessing and downloading the dataset may change over time. If you encounter issues, please refer to the latest instructions on the [ImageNet website](https://image-net.org/download.php).
