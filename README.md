@@ -35,7 +35,10 @@ To run the code in this repository, you'll need to install some dependencies as 
 
 ```bash
 pip install -r requirements.txt
-install.packages(c("ggplot2", "dplyr"))
+```
+
+```R
+install.packages(c("data.table", "tidyr", "scales", "lmtest", "aod", "parallel", "zoo", "svglite", "rlist"))
 ```
 
 ## Usage
