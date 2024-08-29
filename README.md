@@ -69,7 +69,7 @@ To run the model training and probability output script in the `1_probabilities`
 python3 train_models.py
 ```
 
-## Reference
+## References
 If you use this code, please cite my paper:
 
 ```bibtex
@@ -86,6 +86,8 @@ Additionally, this repository employs code from:
 
 - [Eryk Lewinson](https://github.com/erykml/medium_articles/tree/master/Computer%20Vision) for the implementation of LeNet-5 and
 - [Kuang Liu](https://github.com/kuangliu/pytorch-cifar) for the implementation of DLA-Simple and ResNet-18.
+
+A more comprehensive set of references appears in the paper.
 
 ## License
 This repository is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
