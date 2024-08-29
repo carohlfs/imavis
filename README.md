@@ -1,6 +1,8 @@
 # Problem-Dependent Attention and Effort in Neural Networks: Code and Analysis
 
-This repository contains the code and analysis used for the paper "Problem-dependent attention and effort in neural networks with applications to image resolution and model selection" ([article link](https://www.sciencedirect.com/science/article/abs/pii/S0262885623000707) [arXiv link](https://arxiv.org/abs/2201.01415)). The repository is structured into six sections, each corresponding to different aspects of the analysis and figures presented in the paper.
+This repository contains the code and analysis used for the paper "Problem-dependent attention and effort in neural networks with applications to image resolution and model selection" ([article link](https://www.sciencedirect.com/science/article/abs/pii/S0262885623000707) [arXiv link](https://arxiv.org/abs/2201.01415)).
+
+The code for this repository is contained within the src folder. Within that folder are six folders that correspond to different aspects of the analysis and figures presented in the paper:
 
 ## Table of Contents
 - [1_probabilities](#1_probabilities)
@@ -47,15 +49,18 @@ install.packages(c("data.table", "tidyr", "scales", "lmtest", "aod", "parallel",
 2. **Set Up ImageNet-V2 Dataset**:
    - This project requires the ImageNet-V2 dataset, which must be downloaded separately due to licensing restrictions. Follow these steps:
      - Visit the [ImageNet download page](https://image-net.org/download.php) and create an account or log in.
-     - Request access to the ImageNet-V2 1k dataset. Approval may take some time.
-     - After gaining access, ensure you have at least 150GB of free space and download the dataset and extract it to a directory on your local machine:
+     - Request access to the ImageNet-V2 1k dataset (from 2012). Approval may take some time.
+     - After gaining access, ensure you have at least 250GB of free space for the unzipped files (400GB if you aren't deleting the zipped ones), and download the training and validation images (ILSVRC2012_img_train.tar and ILSVRC2012_img_val.tar).
+     - Move the tar files to the root directory of your cloned repository, create subfolders, and extract the files:
+
        ```bash
-       mkdir -p ~/datasets/imagenetv2
-       tar -xzf path_to_downloaded_file.tar.gz -C ~/datasets/imagenetv2
+       mkdir -p data/imagenetv2/train
+       tar -xzf ILSVRC2012_img_train.tar -C data/imagenetv2/train
+       mkdir -p data/imagenetv2/val
+       tar -xzf ILSVRC2012_img_val.tar -C data/imagenetv2/val
        ```
 
 **Note**: The procedures for accessing and downloading the dataset may change over time. If you encounter issues, please refer to the latest instructions on the [ImageNet website](https://image-net.org/download.php).
-
 
 ## Usage
 To run the model training and probability output script in the `1_probabilities` folder:
