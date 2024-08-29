@@ -82,5 +82,10 @@ If you use this code, please cite my paper:
   PAGES = "104696" }
 ```
 
+Additionally, this repository employs code from:
+
+- [Eryk Lewinson](https://github.com/erykml/medium_articles/tree/master/Computer%20Vision) for the implementation of LeNet-5 and
+- [Kuang Liu](https://github.com/kuangliu/pytorch-cifar) for the implementation of DLA-Simple and ResNet-18.
+
 ## License
 This repository is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
