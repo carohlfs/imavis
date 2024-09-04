@@ -33,34 +33,34 @@ R scripts that generate Figure 6, showing correlations between model confidence 
 This folder contains R scripts that implement two threshold-based estimators. One estimator selects image resolution to reduce data usage (Table 4 & Figure 7), while the other selects models to reduce computation (Table 5 & Figure 8). Both the tables and the figures illustrate the tradeoffs between accuracy and cost.
 
 ## Installation
-To run the code in this repository, you'll need to install some dependencies as illustrated below.
+To run the code in this repository, you'll need to install some dependencies, including required packages as well as the ImageNet and ImageNet-V2 datasets, which must be downloaded separately.
 
 1. **Install Required Packages**:
 
 - At a Unix command prompt, install the necessary Python packages:
 ```bash
-pip3 install Pillow fvcore matplotlib numpy pandas ptflops torch torchvision
+pip3 install Pillow fvcore matplotlib numpy pandas ptflops scipy torch torchvision
 ```
 - And in an R session's command prompt, install additional packages:
 ```R
 install.packages(c("data.table", "tidyr", "scales", "lmtest", "aod", "parallel", "zoo", "svglite", "rlist"))
 ```
 
-2. **Set Up ImageNet-V2 Dataset**:
-   - This project requires the ImageNet-V2 dataset, which must be downloaded separately due to licensing restrictions. Follow these steps:
-     - Visit the [ImageNet download page](https://image-net.org/download.php) and create an account or log in.
-     - Request access to the ImageNet-V2 1k dataset (from 2012). Approval may take some time.
-     - After gaining access, ensure you have at least 250GB of free space for the unzipped files (400GB if you aren't deleting the zipped ones), and download the training and validation images (ILSVRC2012_img_train.tar and ILSVRC2012_img_val.tar).
-     - Move the tar files to the root directory of your cloned repository, create subfolders, and extract the files:
+2. **Set Up ImageNet and ImageNet-V2 Datasets**:
 
-       ```bash
-       mkdir -p data/imagenetv2/train
-       tar -xzf ILSVRC2012_img_train.tar -C data/imagenetv2/train
-       mkdir -p data/imagenetv2/val
-       tar -xzf ILSVRC2012_img_val.tar -C data/imagenetv2/val
-       ```
+This project requires the ImageNet and ImageNet-V2 datasets, which must be downloaded separately.
 
-**Note**: The procedures for accessing and downloading the dataset may change over time. If you encounter issues, please refer to the latest instructions on the [ImageNet website](https://image-net.org/download.php).
+- First, visit the [ImageNet download page](https://image-net.org/download.php) and create an account or log in.
+
+- Request access to the ImageNet 1k dataset (from 2012). Approval may take some time.
+- After gaining access, ensure you have at least 250GB of free space for the unzipped files (400GB if you aren't deleting the zipped ones), and download the training and validation images (ILSVRC2012_img_train.tar and ILSVRC2012_img_val.tar).
+- Second, at a Unix command prompt, download the package associated with ImageNet-V2:
+
+```bash
+pip3 install git+https://github.com/modestyachts/ImageNetV2_pytorch
+```
+
+**Note**: The procedures for accessing and downloading the dataset may change over time. If you encounter issues, please refer to the latest instructions on the websites for [ImageNet](https://image-net.org/) and [ImageNet-V2](https://imagenetv2.org/).
 
 ## Usage
 To run the model training and probability output script in the `1_probabilities` folder:

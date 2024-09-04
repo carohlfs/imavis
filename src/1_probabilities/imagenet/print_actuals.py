@@ -1,15 +1,11 @@
+import os
 import sys
 import numpy as np
-from datetime import datetime 
-import pandas as pd
-import re
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torchvision import models, datasets, transforms
-import matplotlib.pyplot as plt
 from imagenetv2_pytorch import ImageNetV2Dataset
 
 N_TRAIN = 1281167
@@ -25,32 +21,27 @@ transform = transforms.Compose([            #[1]
  std=[0.229, 0.224, 0.225]                  #[7]
  )])
 
-train_dataset = datasets.ImageNet(root='inet',split='train',transform=transform)
+train_dataset = datasets.ImageNet(root='../data/imagenetv2',split='train',transform=transform)
 train_actuals = []
 for i in range(N_TRAIN):
 	train_actuals.append(train_dataset[i][1])
-	if i % 1000 == 0:
-		print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-		print("train iteration " + str(i))
 
-valid_dataset = datasets.ImageNet(root='inet',split='val',transform=transform)
+valid_dataset = datasets.ImageNet(root='../data/imagenetv2',split='val',transform=transform)
 valid_actuals = []
 for i in range(N_VALID):
 	valid_actuals.append(valid_dataset[i][1])
-	if i % 1000 == 0:
-		print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-		print("valid iteration " + str(i))
 
+os.makedirs('../data/imagenetv2', exist_ok=True)
+original_wd = os.getcwd()
+os.chdir('../data/imagenetv2')
 test_dataset = ImageNetV2Dataset("matched-frequency",transform=transform)
+os.chdir(original_wd)
 test_actuals = []
 for i in range(N_TEST):
-	test_actuals.append(test_dataset[i][1])
-	if i % 1000 == 0:
-		print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-		print("test iteration " + str(i))
+    test_actuals.append(test_dataset[i][1])
 
-np.savetxt("train_actuals.csv",train_actuals,delimiter="\t")
-np.savetxt("valid_actuals.csv",valid_actuals,delimiter="\t")
-np.savetxt("test_actuals.csv",test_actuals,delimiter="\t")
+np.savetxt("../tmp/probs/train_actuals.csv",train_actuals,delimiter="\t")
+np.savetxt("../tmp/probs/valid_actuals.csv",valid_actuals,delimiter="\t")
+np.savetxt("../tmp/probs/test_actuals.csv",test_actuals,delimiter="\t")
 
 
