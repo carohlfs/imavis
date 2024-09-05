@@ -9,11 +9,11 @@ from torch.utils.data import DataLoader
 from torchvision import models, datasets, transforms
 from imagenetv2_pytorch import ImageNetV2Dataset
 
-model_names = ["alexnet","densenet201","googlenet","convnext_tiny","convnext_large",
-	"efficientnet_b0","efficientnet_b3","efficientnet_b7","regnet_y_128gf",
-	"inception_v3","squeezenet1_1","mobilenet_v3_small","mobilenet_v3_large",
-	"resnet50","resnet101","vgg19_bn","resnext101_32x8d","resnext101_64x4d",
-	"wide_resnet101_2","densenet121"]
+model_names = ["alexnet","densenet201","googlenet",
+	"efficientnet_b0","efficientnet_b7",
+	"inception_v3","mobilenet_v3_small","mobilenet_v3_large",
+	"resnet101","vgg19_bn","resnext101_32x8d",
+	"wide_resnet101_2"]
 
 m = model_names[int(sys.argv[1])]
 

@@ -4,12 +4,14 @@ library(tidyr)
 library(lmtest)
 library(aod)
 
+data.direc <- '../data/'
 probs.direc <- '../tmp/probs/'
 
+# The outcome data live in the data directory, having
+# been saved by the savecsv.py file.
 load.y <- function(sample,dataname){
-	dsmax <- ifelse(grepl("mnist",dataname),28,32)
-	y.file <- paste0(probs.direc,dataname,dsmax,"_",sample,"_actuals.csv")
-	y <- fread(y.file)
+	y.file <- paste0(data.direc,dataname,"/",dataname,"_",sample,".csv")
+	y <- fread(y.file)[,list(V1)]
 	setnames(y,"y")
 	y[,id:=.I]
 	y[,source:=sample]
@@ -24,6 +26,8 @@ assemble.y <- function(dataname){
 	return(y.data)
 }
 
+# The normalized pixel intensity data live in the tmp
+# directory, having been saved by lenet.py.
 load.x <- function(dsrate,sample,dataname){
 	x.file <- paste0(probs.direc,dataname,dsrate,"_",sample,"_X.csv")
 	x <- fread(x.file)

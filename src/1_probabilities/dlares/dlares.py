@@ -192,29 +192,20 @@ def create_transform(resize):
         normalization
     ])
 
-def get_train_probs():
+def get_probs(loader):
     probabilities = []
     net.eval()
     with torch.no_grad():
-        for batch_idx, (inputs, targets) in enumerate(trainloader):
-            probabilities.append(targets.to(device))
-            probabilities.append(net(inputs))
-    return probabilities
-
-def get_test_probs():
-    probabilities = []
-    net.eval()
-    with torch.no_grad():
-        for batch_idx, (inputs, targets) in enumerate(testloader):
+        for batch_idx, (inputs, targets) in enumerate(loader):
             probabilities.append(targets.to(device))
             probabilities.append(net(inputs))
     return probabilities
 
 # Function to save probabilities and classes
 def save_probs_and_classes(prefix, loader):
-    probs = get_train_probs() if 'train' in prefix else get_test_probs()
+    probs = get_probs(loader)
     classes = probs[0].detach().numpy()
-    np.savetxt(f"../tmp/probs/{prefix}_{args.model}actuals.csv", classes, delimiter=",")
+    np.savetxt(f"../tmp/probs/{prefix}_{args.model}preds.csv", classes, delimiter=",")
     probabilities = probs[1].detach().numpy()
     np.savetxt(f"../tmp/probs/{prefix}_{args.model}probs.csv", probabilities, delimiter=",")
 
@@ -233,9 +224,8 @@ elif args.dataset == 'svhn':
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=N_TRAIN, shuffle=False, num_workers=1)
 testloader = torch.utils.data.DataLoader(testset, batch_size=N_VALID, shuffle=False, num_workers=1)
 
-# Save standard dataset results
-save_probs_and_classes(f"{args.dataset}_train", trainloader)
-save_probs_and_classes(f"{args.dataset}_test", testloader)
+# Save standard dataset results for training sample
+save_probs_and_classes(f"{args.dataset}_train32", trainloader)
 
 # Loop through each downsample configuration
 for name, resize in transform_configs.items():
@@ -247,4 +237,4 @@ for name, resize in transform_configs.items():
         testset = torchvision.datasets.SVHN(root=data_root, split='test', download=True, transform=transform)        
     testloader = torch.utils.data.DataLoader(testset, batch_size=N_VALID, shuffle=False, num_workers=1)
     # Save probabilities and classes for the current transformation
-    save_probs_and_classes(f"{args.dataset}{name}_test", testloader)
+    save_probs_and_classes(f"{args.dataset}_test{resize}", testloader)

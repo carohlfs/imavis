@@ -2,3 +2,4 @@ data/
 output/
 src/1_probabilities/dlares/__pycache__/
 tmp/
+.DS_Store

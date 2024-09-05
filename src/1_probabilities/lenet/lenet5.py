@@ -295,7 +295,7 @@ def save_probs_and_classes(model, loader, device, filename_prefix, size):
     probs = get_probs(model, loader, device)
     if size in [28, 32]:
         classes = probs[0].detach().numpy()
-        np.savetxt(f"{filename_prefix}_actuals.csv", classes, delimiter=",")
+        np.savetxt(f"{filename_prefix}_preds.csv", classes, delimiter=",")
     probabilities = probs[1].detach().numpy()
     np.savetxt(f"{filename_prefix}_probs.csv", probabilities, delimiter=",")
 

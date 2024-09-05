@@ -21,12 +21,12 @@ transform = transforms.Compose([            #[1]
  std=[0.229, 0.224, 0.225]                  #[7]
  )])
 
-train_dataset = datasets.ImageNet(root='../data/imagenetv2',split='train',transform=transform)
+train_dataset = datasets.ImageNet(root='../data/imagenet',split='train',transform=transform)
 train_actuals = []
 for i in range(N_TRAIN):
 	train_actuals.append(train_dataset[i][1])
 
-valid_dataset = datasets.ImageNet(root='../data/imagenetv2',split='val',transform=transform)
+valid_dataset = datasets.ImageNet(root='../data/imagenet',split='val',transform=transform)
 valid_actuals = []
 for i in range(N_VALID):
 	valid_actuals.append(valid_dataset[i][1])
@@ -40,8 +40,8 @@ test_actuals = []
 for i in range(N_TEST):
     test_actuals.append(test_dataset[i][1])
 
-np.savetxt("../tmp/probs/train_actuals.csv",train_actuals,delimiter="\t")
-np.savetxt("../tmp/probs/valid_actuals.csv",valid_actuals,delimiter="\t")
-np.savetxt("../tmp/probs/test_actuals.csv",test_actuals,delimiter="\t")
+np.savetxt("../data/imagenet/train_actuals.csv",train_actuals,delimiter="\t")
+np.savetxt("../data/imagenet/valid_actuals.csv",valid_actuals,delimiter="\t")
+np.savetxt("../data/imagenetv2/test_actuals.csv",test_actuals,delimiter="\t")
 
 

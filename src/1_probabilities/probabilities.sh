@@ -11,7 +11,7 @@ RESUME_FLAG=""
 ####### DLA and ResNet-18 #######
 
 # Lists of datasets and models for dlares.py
-datasets=("cifar" "svhn")
+datasets=("svhn" "cifar")
 models=("dla" "res")
 
 # Loop over all combinations of datasets and models
@@ -25,7 +25,7 @@ done
 ####### LeNet-5 #######
 
 # List of datasets for lenet5.py
-lenet_datasets=("mnist" "kmnist" "fashionmnist" "cifar" "svhn")
+lenet_datasets=("mnist" "kmnist" "fashionmnist" "svhn" "cifar")
 
 # Loop over all datasets for lenet5.py
 for dataset in "${lenet_datasets[@]}"; do
@@ -35,7 +35,11 @@ done
 
 ####### Logistic Regression #######
 
+# Organize image data into csvs that live in ../data folder
+python3 savecsv.py
+# Reduce dimensionality of pixel matrices with PCA
 R --vanilla < ../src/1_probabilities/logit/pca.R
+# Run logistic regression using the first 100 or 300 principal components
 R --vanilla < ../src/1_probabilities/logit/logit.R
 
 ####### Models on ImageNet and ImageNet-V2 Data #######
@@ -89,7 +93,7 @@ python3 ../src/1_probabilities/imagenet/print_actuals.py
 PSIZE_values=(256 128 64 32 16)
 
 # Model indices (0-based index for the elements in model_names)
-model_indices=$(seq 0 18)  # There are 19 models, so index 0 to 18
+model_indices=$(seq 0 11)  # There are 12 models, so index 0 to 11
 
 # Loop over all combinations of model indices and PSIZE values
 for index in $model_indices; do

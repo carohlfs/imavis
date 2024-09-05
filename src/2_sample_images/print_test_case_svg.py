@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
 import matplotlib.pyplot as plt
-from PIL import Image
+from Pillow import Image
 
 # download and create datasets
 valid_dataset = datasets.MNIST(root='mnist_data', 
