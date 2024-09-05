@@ -1,6 +1,10 @@
 # 1_probabilities
 
-This folder contains four subfolders, each of which contains code that extracts data and generates model-forecasted probabilities for a different class of models. The scripts inside these folders are run in sequence by the bash shell script probabilities.sh. That script should be called from a Unix prompt with "run" as the working directory.
+This folder contains four subfolders, each of which contains code that extracts data and generates model-forecasted probabilities for a different class of models. The scripts inside these folders are run in sequence by the bash shell script probabilities.sh. That script should be called from a Unix prompt with "run" as the working directory, as follows:
+
+```bash
+bash ../src/1_probabilities/probabilities.sh
+```
 
 Because of access restrictions, the ImageNet data should be downloaded separately. Three files should be saved in tmp/imagenet. Those are:
 
