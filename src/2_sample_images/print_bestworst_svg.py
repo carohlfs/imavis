@@ -1,245 +1,67 @@
-
-import sys
+import os
 import numpy as np
-from datetime import datetime 
-import pandas as pd
-import re
-
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import torch.nn.functional as F
-from torch.utils.data import DataLoader
-import torch.backends.cudnn as cudnn
-import torchvision
 from torchvision import datasets, transforms
-
 import matplotlib.pyplot as plt
+from PIL import Image
 from imagenetv2_pytorch import ImageNetV2Dataset
 
-import os
-import argparse
-from PIL import Image
+# Define an absolute path for the output directory
+output_dir = os.path.abspath('../output/Figure3')
 
-# download and create datasets
-valid_dataset = datasets.MNIST(root='mnist_data', 
-                               train=False)
+# Function to generate and save best and worst figures
+def generate_and_save_bestworst_figures(dataset, best_indices, worst_indices, save_name, cmap=None, ratios=None):
+    """
+    dataset: The dataset to extract images from
+    best_indices: List of indices for the best images
+    worst_indices: List of indices for the worst images
+    save_name: The name for saving the output SVG file
+    output_dir: Absolute path for the output directory
+    cmap: Colormap for grayscale images (use 'gray_r' for MNIST-like datasets, None for RGB)
+    ratios: List of width ratios for ImageNet-like datasets (optional)
+    """
 
+    best1, best2 = dataset[best_indices[0]][0], dataset[best_indices[1]][0]
+    worst1, worst2 = dataset[worst_indices[0]][0], dataset[worst_indices[1]][0]
 
-mnist_best1 = valid_dataset.data[8413]
-mnist_best2 = valid_dataset.data[6657]
-mnist_worst1 = valid_dataset.data[7846]
-mnist_worst2 = valid_dataset.data[249]
+    fig, axes = plt.subplots(1, 4, gridspec_kw={'width_ratios': ratios} if ratios else None, dpi=300)
+    titles = ["High #1", "High #2", "Low #1", "Low #2"]
 
-title1 = "High #1"
-title2 = "High #2"
-title3 = "Low #1"
-title4 = "Low #2"
+    for i, (image, title) in enumerate(zip([best1, best2, worst1, worst2], titles)):
+        axes[i].imshow(image, cmap=cmap)
+        axes[i].axis('off')
+        axes[i].set_title(title, fontsize=7)
 
-mnist_fig = plt.figure(dpi=300)
-plt.subplot(1,4,1)
-plt.axis('off')
-plt.imshow(mnist_best1, cmap='gray_r')
-plt.title(title1,fontsize=7)
-plt.subplot(1,4,2)
-plt.axis('off')
-plt.imshow(mnist_best2, cmap='gray_r')
-plt.title(title2,fontsize=7)
-plt.subplot(1,4,3)
-plt.axis('off')
-plt.imshow(mnist_worst1, cmap='gray_r')
-plt.title(title3,fontsize=7)
-plt.subplot(1,4,4)
-plt.axis('off')
-plt.imshow(mnist_worst2, cmap='gray_r')
-plt.title(title4,fontsize=7)
+    os.makedirs(output_dir, exist_ok=True)  # Ensure the output directory exists
+    output_path = os.path.join(output_dir, f'{save_name}.svg')
+    plt.savefig(output_path, bbox_inches='tight')
 
-plt.savefig('mnist_bestworst.svg',bbox_inches='tight')
+# MNIST Dataset
+mnist_dataset = datasets.MNIST(root='../data/mnist', train=False)
+generate_and_save_bestworst_figures(mnist_dataset, [8413, 6657], [7846, 249], "mnist_bestworst", cmap='gray_r')
 
-# download and create datasets
-valid_dataset = datasets.KMNIST(root='kmnist_data', 
-                               train=False)
+# KMNIST Dataset
+kmnist_dataset = datasets.KMNIST(root='../data/kmnist', train=False)
+generate_and_save_bestworst_figures(kmnist_dataset, [5184, 4151], [5174, 9683], "kmnist_bestworst", cmap='gray_r')
 
+# FashionMNIST Dataset
+fashionmnist_dataset = datasets.FashionMNIST(root='../data/fashionmnist', train=False)
+generate_and_save_bestworst_figures(fashionmnist_dataset, [4341, 2157], [6774, 4144], "fashionmnist_bestworst", cmap='gray_r')
 
+# SVHN Dataset
+svhn_dataset = datasets.SVHN(root='../data/svhn', split="test")
+generate_and_save_bestworst_figures(svhn_dataset, [21183, 18596], [24946, 9990], "svhn_bestworst")
 
-kmnist_best1 = valid_dataset.data[5184]
-kmnist_best2 = valid_dataset.data[4151]
-kmnist_worst1 = valid_dataset.data[5174]
-kmnist_worst2 = valid_dataset.data[9683]
+# CIFAR-10 Dataset
+cifar_dataset = datasets.CIFAR10(root='../data/cifar', train=False)
+generate_and_save_bestworst_figures(cifar_dataset, [4014, 3625], [6427, 4443], "cifar_bestworst")
 
-title1 = "High #1"
-title2 = "High #2"
-title3 = "Low #1"
-title4 = "Low #2"
+# ImageNet Dataset
+imagenet_dataset = datasets.ImageNet(root='../data/imagenet', split='val')
+generate_and_save_bestworst_figures(imagenet_dataset, [19612, 11009], [30765, 47853], "imagenet_bestworst", ratios=[700/469, 800/1200, 530/194, 380/500])
 
-kmnist_fig = plt.figure(dpi=300)
-plt.subplot(1,4,1)
-plt.axis('off')
-plt.imshow(kmnist_best1, cmap='gray_r')
-plt.title(title1,fontsize=7)
-plt.subplot(1,4,2)
-plt.axis('off')
-plt.imshow(kmnist_best2, cmap='gray_r')
-plt.title(title2,fontsize=7)
-plt.subplot(1,4,3)
-plt.axis('off')
-plt.imshow(kmnist_worst1, cmap='gray_r')
-plt.title(title3,fontsize=7)
-plt.subplot(1,4,4)
-plt.axis('off')
-plt.imshow(kmnist_worst2, cmap='gray_r')
-plt.title(title4,fontsize=7)
-
-plt.savefig('kmnist_bestworst.svg',bbox_inches='tight')
-
-
-# download and create datasets
-valid_dataset = datasets.FashionMNIST(root='fashionmnist_data', 
-                               train=False)
-
-
-fashionmnist_best1 = valid_dataset.data[4341]
-fashionmnist_best2 = valid_dataset.data[2157]
-fashionmnist_worst1 = valid_dataset.data[6774]
-fashionmnist_worst2 = valid_dataset.data[4144]
-
-title1 = "High #1"
-title2 = "High #2"
-title3 = "Low #1"
-title4 = "Low #2"
-
-fashionmnist_fig = plt.figure(dpi=300)
-plt.subplot(1,4,1)
-plt.axis('off')
-plt.imshow(fashionmnist_best1, cmap='gray_r')
-plt.title(title1,fontsize=7)
-plt.subplot(1,4,2)
-plt.axis('off')
-plt.imshow(fashionmnist_best2, cmap='gray_r')
-plt.title(title2,fontsize=7)
-plt.subplot(1,4,3)
-plt.axis('off')
-plt.imshow(fashionmnist_worst1, cmap='gray_r')
-plt.title(title3,fontsize=7)
-plt.subplot(1,4,4)
-plt.axis('off')
-plt.imshow(fashionmnist_worst2, cmap='gray_r')
-plt.title(title4,fontsize=7)
-
-plt.savefig('fashionmnist_bestworst.svg',bbox_inches='tight')
-
-
-valid_dataset = datasets.SVHN(root='svhn_data', 
-                               split="test")
-
-
-svhn_best1 = valid_dataset[21183][0]
-svhn_best2 = valid_dataset[18596][0]
-svhn_worst1 = valid_dataset[24946][0]
-svhn_worst2 = valid_dataset[9990][0]
-
-svhn_fig = plt.figure(dpi=300)
-plt.subplot(1,4,1)
-plt.axis('off')
-plt.imshow(svhn_best1)
-plt.title(title1,fontsize=7)
-plt.subplot(1,4,2)
-plt.axis('off')
-plt.imshow(svhn_best2)
-plt.title(title2,fontsize=7)
-plt.subplot(1,4,3)
-plt.axis('off')
-plt.imshow(svhn_worst1)
-plt.title(title3,fontsize=7)
-plt.subplot(1,4,4)
-plt.axis('off')
-plt.imshow(svhn_worst2)
-plt.title(title4,fontsize=7)
-
-plt.savefig('svhn_bestworst.svg',bbox_inches='tight')
-
-
-valid_dataset = datasets.CIFAR10(root='cifar_data', 
-                               train=False)
-
-
-cifar_best1 = valid_dataset.data[4014]
-cifar_best2 = valid_dataset.data[3625]
-cifar_worst1 = valid_dataset.data[6427]
-cifar_worst2 = valid_dataset.data[4443]
-
-cifar_fig = plt.figure(dpi=300)
-plt.subplot(1,4,1)
-plt.axis('off')
-plt.imshow(cifar_best1)
-plt.title(title1,fontsize=7)
-plt.subplot(1,4,2)
-plt.axis('off')
-plt.imshow(cifar_best2)
-plt.title(title2,fontsize=7)
-plt.subplot(1,4,3)
-plt.axis('off')
-plt.imshow(cifar_worst1)
-plt.title(title3,fontsize=7)
-plt.subplot(1,4,4)
-plt.axis('off')
-plt.imshow(cifar_worst2)
-plt.title(title4,fontsize=7)
-
-plt.savefig('cifar_bestworst.svg',bbox_inches='tight')
-
-
-valid_dataset = datasets.ImageNet(root='inet',split='val',transform=None)
-
-imagenet_best1 = valid_dataset[19612][0]
-imagenet_best2 = valid_dataset[11009][0]
-imagenet_worst1 = valid_dataset[30765][0]
-imagenet_worst2 = valid_dataset[47853][0]
-
-# 700 x 469
-# 800 x 1200
-# 530 x 194
-# 380 x 500
-
-imagenet_fig, (i0, i1, i2, i3) = plt.subplots(1, 4, gridspec_kw={'width_ratios': [700/469, 800/1200, 530/194, 380/500]})
-i0.imshow(imagenet_best1)
-i0.axis('off')
-i0.set_title(title1, fontsize=7)
-i1.imshow(imagenet_best2)
-i1.axis('off')
-i1.set_title(title2, fontsize=7)
-i2.imshow(imagenet_worst1)
-i2.axis('off')
-i2.set_title(title3, fontsize=7)
-i3.imshow(imagenet_worst2)
-i3.axis('off')
-i3.set_title(title4, fontsize=7)
-plt.savefig('imagenet_bestworst.svg',bbox_inches='tight',dpi=300)
-
-valid_dataset = ImageNetV2Dataset("matched-frequency",transform=None)
-
-imagenetv2_best1 = valid_dataset[5139][0]
-imagenetv2_best2 = valid_dataset[9889][0]
-imagenetv2_worst1 = valid_dataset[6944][0]
-imagenetv2_worst2 = valid_dataset[8465][0]
-
-imagenet_fig = plt.figure()
-plt.subplot(1,4,1)
-plt.axis('off')
-plt.imshow(imagenetv2_best1)
-plt.title(title1,fontsize=7)
-plt.subplot(1,4,2)
-plt.axis('off')
-plt.imshow(imagenetv2_best2)
-plt.title(title2,fontsize=7)
-plt.subplot(1,4,3)
-plt.axis('off')
-plt.imshow(imagenetv2_worst1)
-plt.title(title3,fontsize=7)
-plt.subplot(1,4,4)
-plt.axis('off')
-plt.imshow(imagenetv2_worst2)
-plt.title(title4,fontsize=7)
-
-plt.savefig('imagenetv2_bestworst.svg',bbox_inches='tight',dpi=300)
-
+# ImageNetV2 Dataset
+original_wd = os.getcwd()
+os.chdir('../data/imagenetv2')
+imagenetv2_dataset = ImageNetV2Dataset("matched-frequency")
+generate_and_save_bestworst_figures(imagenetv2_dataset, [5139, 9889], [6944, 8465], "imagenetv2_bestworst")
+os.chdir(original_wd)

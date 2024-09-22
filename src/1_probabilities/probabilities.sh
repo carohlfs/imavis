@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ImageNet tar file directory. Files in this directory should include
-# ILSVRC2012_img_train.tar, ILSVRC2012_img_val.tar, and ILSVRC2017_devkit.tar.gz
+# ILSVRC2012_img_train.tar, ILSVRC2012_img_val.tar, and ILSVRC2012_devkit.tar.gz
 DOWNLOAD_DIR = "../tmp/imagenet"
 
 # Set the learning rate and other common arguments
@@ -73,8 +73,10 @@ done
 
 # The validation data aren't sorted into class-specific tar files, so we need supplemental info.
 
-# Grab the ground truth labels and the mapping file from the 2017 devkit
-tar -xzf "$DOWNLOAD_DIR"/ILSVRC2017_devkit.tar.gz --strip-components=3 -C ../tmp/imagenet ILSVRC/devkit/data/ILSVRC2015_clsloc_validation_ground_truth.txt ILSVRC/devkit/data/map_clsloc.txt
+# Extract the metadata into the ../data/imagenet directory
+tar -xzf "$DOWNLOAD_DIR"/ILSVRC2017_devkit.tar.gz ../data/imagenet
+# PyTorch also does a check to ensure the tar.gz is in the folder.
+cp "$DOWNLOAD_DIR"/ILSVRC2017_devkit.tar.gz ../data/imagenet
 
 # Then run a script that extracts the output files into label-specific folders like with the training data.
 python3 ../src/1_probabilities/imagenet/sort_valid.py

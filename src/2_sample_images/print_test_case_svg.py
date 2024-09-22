@@ -1,301 +1,106 @@
-
 import numpy as np
-from datetime import datetime 
-import pandas as pd
-
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import DataLoader
-
 from torchvision import datasets, transforms
-
 import matplotlib.pyplot as plt
-from Pillow import Image
+from PIL import Image
 
-# download and create datasets
-valid_dataset = datasets.MNIST(root='mnist_data', 
-                               train=False)
+# Function to generate and save figures, with inferred settings based on save_name
+def generate_and_save_figures(input_data, save_name):
+    """
+    input_data: Can be a dataset or a path to an image file
+    save_name: The name for saving the output SVG file (used to infer image type)
+    """
 
+    # Infer dataset type from save_name and set sizes, titles, and transformations accordingly
+    if "mnist" in save_name or "kmnist" in save_name or "fashionmnist" in save_name:
+        sizes = [28, 14, 7, 4, 2]
+        titles = ["28x28", "14x14", "7x7", "4x4", "2x2"]
+        transform = transforms.Compose([
+            transforms.Grayscale(),  # Convert to grayscale
+            transforms.Resize((32, 32))  # Final resize to 32x32
+        ])
+        is_image_path = False
+        is_grayscale = True
 
-mnist_fig1 = transforms.Resize((32,32))(transforms.Resize((28,28))(valid_dataset.data))[0]
-mnist_fig2 = transforms.Resize((32,32))(transforms.Resize((14,14))(valid_dataset.data))[0]
-mnist_fig4 = transforms.Resize((32,32))(transforms.Resize((7,7))(valid_dataset.data))[0]
-mnist_fig7 = transforms.Resize((32,32))(transforms.Resize((4,4))(valid_dataset.data))[0]
-mnist_fig14 = transforms.Resize((32,32))(transforms.Resize((2,2))(valid_dataset.data))[0]
+    elif "svhn" in save_name or "cifar" in save_name:
+        sizes = [32, 16, 8, 4, 2]
+        titles = ["32x32", "16x16", "8x8", "4x4", "2x2"]
+        transform = transforms.Resize((32, 32))  # Resize first
+        is_image_path = False
+        is_grayscale = False
 
-title1 = "28x28"
-title2 = "14x14"
-title3 = "7x7"
-title4 = "4x4"
-title5 = "2x2"
+    elif "imagenet" in save_name:
+        sizes = [256, 128, 64, 32, 16]
+        titles = ["341x256", "171x128", "85x64", "43x32", "21x16"]
+        transform = transforms.Resize(256)  # Directly resize to 256
+        is_image_path = True
+        is_grayscale = False
 
-mnist_fig = plt.figure(dpi=300)
-plt.subplot(1,5,1)
-plt.axis('off')
-plt.imshow(mnist_fig1, cmap='gray_r')
-plt.title(title1,fontsize=7)
-plt.subplot(1,5,2)
-plt.axis('off')
-plt.imshow(mnist_fig2, cmap='gray_r')
-plt.title(title2,fontsize=7)
-plt.subplot(1,5,3)
-plt.axis('off')
-plt.imshow(mnist_fig4, cmap='gray_r')
-plt.title(title3,fontsize=7)
-plt.subplot(1,5,4)
-plt.axis('off')
-plt.imshow(mnist_fig7, cmap='gray_r')
-plt.title(title4,fontsize=7)
-plt.subplot(1,5,5)
-plt.axis('off')
-plt.imshow(mnist_fig14, cmap='gray_r')
-plt.title(title5,fontsize=7)
+    fig = plt.figure(dpi=300)
 
-plt.savefig('mnist_fig.svg',bbox_inches='tight')
+    # Load the image or dataset accordingly
+    if is_image_path:
+        image = Image.open(input_data)  # Load image from path for ImageNet
+    else:
+        if hasattr(input_data, 'data'):  # Handle MNIST-like datasets
+            if isinstance(input_data.data, torch.Tensor):
+                image = input_data.data[0].numpy()  # Convert to NumPy if tensor
+            else:
+                image = input_data.data[0]
+        else:  # Handle SVHN and CIFAR-like datasets
+            image = input_data[0]  # Access first image
 
-# download and create datasets
-valid_dataset = datasets.KMNIST(root='kmnist_data', 
-                               train=False)
+        # CIFAR-10 and SVHN images need to be converted to PIL Image with RGB format
+        if not is_grayscale:
+            if len(image.shape) == 3 and image.shape[0] == 3:  # Check if RGB format
+                image = np.transpose(image, (1, 2, 0))  # Transpose to HWC for PIL
 
+    for i, size in enumerate(sizes):
+        # Handle different image formats
+        if is_grayscale:  # Grayscale images
+            img_resized = transform(transforms.Resize(size)(Image.fromarray(image)))
+        else:  # RGB images
+            img_resized = transform(transforms.Resize(size)(Image.fromarray(np.array(image).astype(np.uint8))))
 
-kmnist_fig1 = transforms.Resize((32,32))(transforms.Resize((28,28))(valid_dataset.data))[0]
-kmnist_fig2 = transforms.Resize((32,32))(transforms.Resize((14,14))(valid_dataset.data))[0]
-kmnist_fig4 = transforms.Resize((32,32))(transforms.Resize((7,7))(valid_dataset.data))[0]
-kmnist_fig7 = transforms.Resize((32,32))(transforms.Resize((4,4))(valid_dataset.data))[0]
-kmnist_fig14 = transforms.Resize((32,32))(transforms.Resize((2,2))(valid_dataset.data))[0]
+        # Plot the resized image
+        plt.subplot(1, len(sizes), i + 1)
+        plt.axis('off')
+        plt.imshow(img_resized, cmap='gray_r' if is_grayscale else None)
+        plt.title(titles[i], fontsize=7)
 
-kmnist_fig = plt.figure(dpi=300)
-plt.subplot(1,5,1)
-plt.axis('off')
-plt.imshow(kmnist_fig1, cmap='gray_r')
-plt.title(title1,fontsize=7)
-plt.subplot(1,5,2)
-plt.axis('off')
-plt.imshow(kmnist_fig2, cmap='gray_r')
-plt.title(title2,fontsize=7)
-plt.subplot(1,5,3)
-plt.axis('off')
-plt.imshow(kmnist_fig4, cmap='gray_r')
-plt.title(title3,fontsize=7)
-plt.subplot(1,5,4)
-plt.axis('off')
-plt.imshow(kmnist_fig7, cmap='gray_r')
-plt.title(title4,fontsize=7)
-plt.subplot(1,5,5)
-plt.axis('off')
-plt.imshow(kmnist_fig14, cmap='gray_r')
-plt.title(title5,fontsize=7)
+    plt.savefig(f'../output/Figure2/{save_name}.svg', bbox_inches='tight')
 
-plt.savefig('kmnist_fig.svg',bbox_inches='tight')
+# MNIST Dataset
+mnist_dataset = datasets.MNIST(root='../data/mnist', train=False)
+generate_and_save_figures(mnist_dataset, "mnist_fig")
 
+# KMNIST Dataset
+kmnist_dataset = datasets.KMNIST(root='../data/kmnist', train=False)
+generate_and_save_figures(kmnist_dataset, "kmnist_fig")
 
-# download and create datasets
-valid_dataset = datasets.FashionMNIST(root='fashionmnist_data', 
-                               train=False)
+# FashionMNIST Dataset
+fashionmnist_dataset = datasets.FashionMNIST(root='../data/fashionmnist', train=False)
+generate_and_save_figures(fashionmnist_dataset, "fashionmnist_fig")
 
+# SVHN Dataset
+svhn_dataset = datasets.SVHN(root='../data/svhn', split="test")
+generate_and_save_figures(svhn_dataset, "svhn_fig")
 
-fashionmnist_fig1 = transforms.Resize((32,32))(transforms.Resize((28,28))(valid_dataset.data))[0]
-fashionmnist_fig2 = transforms.Resize((32,32))(transforms.Resize((14,14))(valid_dataset.data))[0]
-fashionmnist_fig4 = transforms.Resize((32,32))(transforms.Resize((7,7))(valid_dataset.data))[0]
-fashionmnist_fig7 = transforms.Resize((32,32))(transforms.Resize((4,4))(valid_dataset.data))[0]
-fashionmnist_fig14 = transforms.Resize((32,32))(transforms.Resize((2,2))(valid_dataset.data))[0]
+# CIFAR10 Dataset
+cifar_dataset = datasets.CIFAR10(root='../data/cifar', train=False)
+generate_and_save_figures(cifar_dataset, "cifar_fig")
 
-fashionmnist_fig = plt.figure(dpi=300)
-plt.subplot(1,5,1)
-plt.axis('off')
-plt.imshow(fashionmnist_fig1, cmap='gray_r')
-plt.title(title1,fontsize=7)
-plt.subplot(1,5,2)
-plt.axis('off')
-plt.imshow(fashionmnist_fig2, cmap='gray_r')
-plt.title(title2,fontsize=7)
-plt.subplot(1,5,3)
-plt.axis('off')
-plt.imshow(fashionmnist_fig4, cmap='gray_r')
-plt.title(title3,fontsize=7)
-plt.subplot(1,5,4)
-plt.axis('off')
-plt.imshow(fashionmnist_fig7, cmap='gray_r')
-plt.title(title4,fontsize=7)
-plt.subplot(1,5,5)
-plt.axis('off')
-plt.imshow(fashionmnist_fig14, cmap='gray_r')
-plt.title(title5,fontsize=7)
+# For ImageNet and ImageNet-V2, reference the first validation or test
+# image directly by name to ensure a match with the ones used in the paper.
 
-plt.savefig('fashionmnist_fig.svg',bbox_inches='tight')
+# for ImageNet, it's the very first tench (class 0) image.
+# ImageNet Dataset
+imagenet_sample_path = "../data/imagenet/val/n01440764/ILSVRC2012_val_00000293.JPEG"
+generate_and_save_figures(imagenet_sample_path, "imagenet_fig")
 
+# for ImageNet-V2, it's a sleeping bag (category 797), which happens to be
+# the first element of the dataset when it's loaded via PyTorch.
 
-valid_dataset = datasets.SVHN(root='svhn_data', 
-                               split="test")
-
-
-title1 = "32x32"
-title2 = "16x16"
-title3 = "8x8"
-title4 = "4x4"
-title5 = "2x2"
-
-svhn_fig1 = np.transpose(transforms.ToTensor()(valid_dataset.data[0]),(1,0,2))
-svhn_fig2 = svhn_fig1
-svhn_fig4 = svhn_fig1
-svhn_fig8 = svhn_fig1
-svhn_fig16 = svhn_fig1
-svhn_fig2 = transforms.Resize((16,16))(svhn_fig2)
-svhn_fig4 = transforms.Resize((8,8))(svhn_fig4)
-svhn_fig8 = transforms.Resize((4,4))(svhn_fig8)
-svhn_fig16 = transforms.Resize((2,2))(svhn_fig16)
-
-svhn_fig1 = np.transpose(transforms.Resize((32,32))(svhn_fig1),(2,1,0))
-svhn_fig2 = np.transpose(transforms.Resize((32,32))(svhn_fig2),(2,1,0))
-svhn_fig4 = np.transpose(transforms.Resize((32,32))(svhn_fig4),(2,1,0))
-svhn_fig8 = np.transpose(transforms.Resize((32,32))(svhn_fig8),(2,1,0))
-svhn_fig16 = np.transpose(transforms.Resize((32,32))(svhn_fig16),(2,1,0))
-
-svhn_fig = plt.figure(dpi=300)
-plt.subplot(1,5,1)
-plt.axis('off')
-plt.imshow(svhn_fig1)
-plt.title(title1,fontsize=7)
-plt.subplot(1,5,2)
-plt.axis('off')
-plt.imshow(svhn_fig2)
-plt.title(title2,fontsize=7)
-plt.subplot(1,5,3)
-plt.axis('off')
-plt.imshow(svhn_fig4)
-plt.title(title3,fontsize=7)
-plt.subplot(1,5,4)
-plt.axis('off')
-plt.imshow(svhn_fig8)
-plt.title(title4,fontsize=7)
-plt.subplot(1,5,5)
-plt.axis('off')
-plt.imshow(svhn_fig16)
-plt.title(title5,fontsize=7)
-
-plt.savefig('svhn_fig.svg',bbox_inches='tight')
-
-
-valid_dataset = datasets.CIFAR10(root='cifar_data', 
-                               train=False)
-
-
-cifar_fig1 = transforms.ToTensor()(valid_dataset.data[0])
-cifar_fig2 = cifar_fig1
-cifar_fig4 = cifar_fig1
-cifar_fig8 = cifar_fig1
-cifar_fig16 = cifar_fig1
-cifar_fig2 = transforms.Resize((16,16))(cifar_fig2)
-cifar_fig4 = transforms.Resize((8,8))(cifar_fig4)
-cifar_fig8 = transforms.Resize((4,4))(cifar_fig8)
-cifar_fig16 = transforms.Resize((2,2))(cifar_fig16)
-
-cifar_fig1 = np.transpose(transforms.Resize((32,32))(cifar_fig1),(1,2,0))
-cifar_fig2 = np.transpose(transforms.Resize((32,32))(cifar_fig2),(1,2,0))
-cifar_fig4 = np.transpose(transforms.Resize((32,32))(cifar_fig4),(1,2,0))
-cifar_fig8 = np.transpose(transforms.Resize((32,32))(cifar_fig8),(1,2,0))
-cifar_fig16 = np.transpose(transforms.Resize((32,32))(cifar_fig16),(1,2,0))
-
-cifar_fig = plt.figure(dpi=300)
-plt.subplot(1,5,1)
-plt.axis('off')
-plt.imshow(cifar_fig1)
-plt.title(title1,fontsize=7)
-plt.subplot(1,5,2)
-plt.axis('off')
-plt.imshow(cifar_fig2)
-plt.title(title2,fontsize=7)
-plt.subplot(1,5,3)
-plt.axis('off')
-plt.imshow(cifar_fig4)
-plt.title(title3,fontsize=7)
-plt.subplot(1,5,4)
-plt.axis('off')
-plt.imshow(cifar_fig8)
-plt.title(title4,fontsize=7)
-plt.subplot(1,5,5)
-plt.axis('off')
-plt.imshow(cifar_fig16)
-plt.title(title5,fontsize=7)
-
-plt.savefig('cifar_fig.svg',bbox_inches='tight')
-
-
-title1 = "341x256"
-title2 = "171x128"
-title3 = "85x64"
-title4 = "43x32"
-title5 = "21x16"
-
-imagenet_sample = Image.open("/Volumes/T7 Shield/Pretrained/ILSVRC2012_val_00000293.JPEG")
-# imagenet_sample = Image.open("/Volumes/T7 Shield/Pretrained/ILSVRC2012_val_00000550.JPEG")
-
-imagenet_fig256 = transforms.Resize(256)(transforms.Resize(256)(imagenet_sample))
-imagenet_fig128 = transforms.Resize(256)(transforms.Resize(128)(imagenet_sample))
-imagenet_fig64 = transforms.Resize(256)(transforms.Resize(64)(imagenet_sample))
-imagenet_fig32 = transforms.Resize(256)(transforms.Resize(32)(imagenet_sample))
-imagenet_fig16 = transforms.Resize(256)(transforms.Resize(16)(imagenet_sample))
-
-imagenet_fig = plt.figure(dpi=300)
-plt.subplot(1,5,1)
-plt.axis('off')
-plt.imshow(imagenet_fig256)
-plt.title(title1,fontsize=7)
-plt.subplot(1,5,2)
-plt.axis('off')
-plt.imshow(imagenet_fig128)
-plt.title(title2,fontsize=7)
-plt.subplot(1,5,3)
-plt.axis('off')
-plt.imshow(imagenet_fig64)
-plt.title(title3,fontsize=7)
-plt.subplot(1,5,4)
-plt.axis('off')
-plt.imshow(imagenet_fig32)
-plt.title(title4,fontsize=7)
-plt.subplot(1,5,5)
-plt.axis('off')
-plt.imshow(imagenet_fig16)
-plt.title(title5,fontsize=7)
-
-plt.savefig('imagenet_fig.svg',bbox_inches='tight')
-
-title1 = "256x341"
-title2 = "128x171"
-title3 = "64x85"
-title4 = "32x43"
-title5 = "16x21"
-
-imagenet2_sample = Image.open("/Volumes/T7 Shield/Pretrained/58fbc3e79ef15162b7726de04e98c90bb91a3055.jpeg")
-imagenet2_sample = Image.open("/Volumes/T7 Shield/Pretrained/first_sleepingbag.png")
-
-imagenet2_fig256 = transforms.Resize(256)(transforms.Resize(256)(imagenet2_sample))
-imagenet2_fig128 = transforms.Resize(256)(transforms.Resize(128)(imagenet2_sample))
-imagenet2_fig64 = transforms.Resize(256)(transforms.Resize(64)(imagenet2_sample))
-imagenet2_fig32 = transforms.Resize(256)(transforms.Resize(32)(imagenet2_sample))
-imagenet2_fig16 = transforms.Resize(256)(transforms.Resize(16)(imagenet2_sample))
-
-imagenet2_fig = plt.figure(dpi=300)
-plt.subplot(1,5,1)
-plt.axis('off')
-plt.imshow(imagenet2_fig256)
-plt.title(title1,fontsize=7)
-plt.subplot(1,5,2)
-plt.axis('off')
-plt.imshow(imagenet2_fig128)
-plt.title(title2,fontsize=7)
-plt.subplot(1,5,3)
-plt.axis('off')
-plt.imshow(imagenet2_fig64)
-plt.title(title3,fontsize=7)
-plt.subplot(1,5,4)
-plt.axis('off')
-plt.imshow(imagenet2_fig32)
-plt.title(title4,fontsize=7)
-plt.subplot(1,5,5)
-plt.axis('off')
-plt.imshow(imagenet2_fig16)
-plt.title(title5,fontsize=7)
-
-plt.savefig('imagenet2_fig.svg',bbox_inches='tight')
+# ImageNetV2 Dataset
+imagenetv2_sample_path = "../data/imagenetv2/ImageNetV2-matched-frequency/797/32bef66d872325ebe77fb9242d5eee4e7afabe66.jpeg"
+generate_and_save_figures(imagenetv2_sample_path, "imagenet2_fig")

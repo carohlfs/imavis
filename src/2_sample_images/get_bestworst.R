@@ -2,7 +2,7 @@ library('data.table')
 
 # pull lenets
 # only do lenet for mnist-style
-dataname <- c("mnist","fashionmnist","kmnist")
+dataname <- c("mnist","kmnist","fashionmnist")
 pullsource <- "test"
 ds.rate <- 7
 filenames <- paste0("/Volumes/T7 Shield/Effort_Jul2022/",dataname,ds.rate,"_",pullsource,"_probs.csv")
