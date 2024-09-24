@@ -63,11 +63,13 @@ pip3 install git+https://github.com/modestyachts/ImageNetV2_pytorch
 **Note**: The procedures for accessing and downloading the dataset may change over time. If you encounter issues, please refer to the latest instructions on the websites for [ImageNet](https://image-net.org/) and [ImageNet-V2](https://imagenetv2.org/).
 
 ## Usage
-To run the model training and probability output script in the `1_probabilities` folder:
+To run the model training and probability output script in the `1_probabilities` folder, set 'run' as your working directory, and then enter:
 
 ```bash
-python3 train_models.py
+bash ../src/1_probabilities/probabilities.sh
 ```
+
+Note that this shell script is resource-intensive in terms of both space and computing time. The README.md file within the src/1_probabilities folder describes the separate tasks and scripts that are run by that script.
 
 ## References
 If you use this code, please cite my paper:

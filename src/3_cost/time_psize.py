@@ -196,4 +196,4 @@ data = {'Model': model_names,
 os.chdir('../../Pretrained/')
 
 df = pd.DataFrame(data)
-df.to_csv('flops.csv')
+df.to_csv('../tmp/cost/flops.csv')
