@@ -39,7 +39,7 @@ To run the code in this repository, you'll need to install some dependencies, in
 
 - At a Unix command prompt, install the necessary Python packages:
 ```bash
-pip3 install Pillow fvcore matplotlib numpy pandas ptflops scipy torch torchvision
+pip3 install Pillow fvcore matplotlib numpy pandas dask pyreadr ptflops scipy torch torchvision
 ```
 - And in an R session's command prompt, install additional packages:
 ```R
